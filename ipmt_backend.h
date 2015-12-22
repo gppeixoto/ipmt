@@ -31,6 +31,7 @@
 
 using namespace std;
 
+typedef pair<int, int> ii;
 typedef vector<string> vs;
 typedef vector<int> vi;
 typedef pair<string, int> psi;
