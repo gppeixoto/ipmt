@@ -1,21 +1,5 @@
-#include <string>
+#include "ipmt_backend.h"
 
-#include <vector>
-#include <queue>
-#include <iostream>
-#include <cstring>
-#include <set>
-
-#include <getopt.h>
-#include <stdlib.h>
-#include <fstream>
-#include <dirent.h>
-#include <sys/types.h>
-#include <assert.h>
-
-#include <glob.h>
-
-using namespace std;
 
 void help()
 {
@@ -129,6 +113,7 @@ int main(int argc, char** argv){
         }
     }
     
+                printencode("A_ASA_DA_CASA");
     if(isIndex){
         for (string &file : textfiles){
             if (isSuffixArray){
