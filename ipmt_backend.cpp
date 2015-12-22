@@ -5,6 +5,7 @@ struct SuffixArray
     char T[MAX_N];
     int n;
     int RA[MAX_N], tempRA[MAX_N], SA[MAX_N], tempSA[MAX_N], c[MAX_N];
+    vi occs;
 
     void countingSort(int k) {
         int i, sum, maxi = max(300, n);
@@ -60,10 +61,28 @@ struct SuffixArray
         return ans;
     }
 
+    void dumpSA() {
+        ofstream ofs;
+        ofs.open("sarr.txt");
+        for (int i=0; i < n; ++i)
+            ofs << SA[i] << endl;
+        ofs.close();
+    }
+
+    void readSA() {
+        ifstream ifs("sarr.txt");
+        if (!ifs.good()) cout << "Arquivo de texto nao foi indexado" << endl;
+        string line;
+        int i = 0;
+        while (getline(ifs, line)) {
+            SA[i] = stoi(line);
+            ++i;
+        }
+    }
+
     void run() {
         n = (int)strlen(gets(T));
-        T[n++] = '$';
-        constructSA();
+        readSA();
         for (int i=0; i < n; ++i)
             printf("%2d\t%s\n", SA[i], T + SA[i]);
         string pat = "ad";
@@ -71,15 +90,20 @@ struct SuffixArray
         if (pos.first != -1 && pos.second != -1) {
             printf("%s found, SA[%d..%d] of %s\n", pat.c_str(), pos.first, pos.second, T);
             printf("They are:\n");
-            for (int i=pos.first; i <= pos.second; ++i)
+            for (int i=pos.first; i <= pos.second; ++i){
                 printf("    %s\n", T+SA[i]);
+                occs.push_back(SA[i]);
+            }
+        } else {
+            cout << ":(" << endl;
         }
     }
 };
 
-int main()
-{
-    SuffixArray sa = SuffixArray();
-    sa.run();
+void run_sarr_match(string &txtfile, string &pattern, bool silent) {
+    // todo
+}
+
+int main(){
     return 0;
 }

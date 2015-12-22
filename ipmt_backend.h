@@ -38,4 +38,6 @@ typedef pair<string, int> psi;
 typedef vector<psi> v_psi;
 typedef unsigned long long ull;
 
+void run_sarr_match(string &txtfile, string &pattern, bool silent);
+
 #endif
