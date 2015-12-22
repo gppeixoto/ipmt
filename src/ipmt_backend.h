@@ -39,6 +39,6 @@ typedef unsigned long long ull;
 
 //vector<LZTuple> lz77_encode(string &str);
 
-void printencode(string s);
+void testencode(string s);
 
 #endif

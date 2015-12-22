@@ -76,8 +76,8 @@ int main(int argc, char** argv){
                 break;
         }
     }
-
     if (options >= argc || argc == 1){
+    cout << "alo "  << endl;
         help();
     }
 
@@ -97,11 +97,6 @@ int main(int argc, char** argv){
             while (infile >> pat){
                 patterns.push_back(pat);
             }
-
-            if (argc <= options+1){
-                cout << "Insira um ou mais arquivos de texto para realizar a busca" << endl;
-                help();
-            }
         }
     }
 
@@ -112,8 +107,10 @@ int main(int argc, char** argv){
             textfiles.push_back(match);
         }
     }
-    
-                printencode("A_ASA_DA_CASA");
+    for (auto str : patterns) {
+        testencode(str);
+        //cout << "encode" << endl;
+    }
     if(isIndex){
         for (string &file : textfiles){
             if (isSuffixArray){
