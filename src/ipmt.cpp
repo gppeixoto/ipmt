@@ -109,7 +109,6 @@ int main(int argc, char** argv){
     }
     for (auto str : patterns) {
         testencode(str);
-        //cout << "encode" << endl;
     }
     if(isIndex){
         for (string &file : textfiles){
