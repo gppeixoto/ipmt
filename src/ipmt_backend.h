@@ -26,7 +26,7 @@
 #define SIZE MAX_CHAR - MIN_CHAR
 #define MAX_ST 30
 #define CHECK_BIT(var,pos) ((var) & (1LL<<(pos)))
-#define MAX_N 1010
+#define MAX_N 10000
 #define ALPHABET_SIZE 256
 
 using namespace std;
@@ -38,9 +38,6 @@ typedef pair<string, int> psi;
 typedef vector<psi> v_psi;
 typedef unsigned long long ull;
 
-//vector<LZTuple> lz77_encode(string &str);
-
-void testencode(string s);
-void run_sarr_match(string &txtfile, string &pattern, bool silent);
+void index(string txtfile);
 
 #endif

@@ -77,7 +77,6 @@ int main(int argc, char** argv){
         }
     }
     if (options >= argc || argc == 1){
-    cout << "alo "  << endl;
         help();
     }
 
@@ -107,16 +106,10 @@ int main(int argc, char** argv){
             textfiles.push_back(match);
         }
     }
-    for (auto str : patterns) {
-        testencode(str);
-    }
+
     if(isIndex){
-        for (string &file : textfiles){
-            if (isSuffixArray){
-                //ipmt_index_array(file);
-            } else{
-                //ipmt_index_tree(file);
-            }
+        for (string file : textfiles){
+            index(file);
         }
     }
 	

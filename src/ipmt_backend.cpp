@@ -8,7 +8,7 @@ struct SuffixArray
     vi occs;
 
     void countingSort(int k) {
-        int i, sum, maxi = max(300, n);
+        int i, sum, maxi = max(ALPHABET_SIZE, n);
         memset(c, 0, sizeof c);
         for (i=0; i < n; ++i)
             c[i + k < n ? RA[i + k] : 0]++;
@@ -61,16 +61,16 @@ struct SuffixArray
         return ans;
     }
 
-    void dumpSA() {
+    void dumpSA(string &filename) {
         ofstream ofs;
-        ofs.open("sarr.txt");
+        ofs.open(filename);
         for (int i=0; i < n; ++i)
             ofs << SA[i] << endl;
         ofs.close();
     }
 
-    void readSA() {
-        ifstream ifs("sarr.txt");
+    void readSA(string &filename) {
+        ifstream ifs(filename);
         if (!ifs.good()) cout << "Arquivo de texto nao foi indexado" << endl;
         string line;
         int i = 0;
@@ -80,23 +80,12 @@ struct SuffixArray
         }
     }
 
-    void run() {
-        n = (int)strlen(gets(T));
-        readSA();
-        for (int i=0; i < n; ++i)
-            printf("%2d\t%s\n", SA[i], T + SA[i]);
-        string pat = "ad";
-        ii pos = stringMatch(pat);
-        if (pos.first != -1 && pos.second != -1) {
-            printf("%s found, SA[%d..%d] of %s\n", pat.c_str(), pos.first, pos.second, T);
-            printf("They are:\n");
-            for (int i=pos.first; i <= pos.second; ++i){
-                printf("    %s\n", T+SA[i]);
-                occs.push_back(SA[i]);
-            }
-        } else {
-            cout << ":(" << endl;
-        }
+    void index(string filename, string content){
+        filename += ".idx";
+        strncpy(T, content.c_str(), sizeof(T));
+        n = content.size();
+        constructSA();
+        dumpSA(filename);
     }
 };
 
@@ -115,6 +104,13 @@ struct LZTuple
         c = ch;
     }
 };
+
+void basename(string &filename){
+    const size_t period_idx = filename.rfind('.');
+    if (string::npos != period_idx){
+        filename.erase(period_idx);
+    }
+}
 
 vector<LZTuple> lz77_encode(string &str){
     int window_size = 8;
@@ -161,16 +157,26 @@ string lz77_decode(vector<LZTuple> vec){
     return ret;
 }
 
-void printencode(string s){
-    vector<LZTuple> vec = lz77_encode(s);
 
-    for (auto tuple : vec)
-    {
-        cout << tuple.pos << " " << tuple.tam << " " << tuple.c << endl;
+string getFileContent(string &textFile)
+{
+    ifstream infile(textFile);
+    string input = "";
+    if (!infile.good()) {
+        cout << "Arquivo de padrão << " << textFile << " >> inválido" << endl;
+        exit(1);
     }
+    string line;
+    while ( getline( infile, line) ) {
+        line += '\n';
+        input += line;
+    }
+    return input.substr(0, input.length()-1);
 }
 
-void testencode(string s){
-
-    assert (s.compare(lz77_decode(lz77_encode(s))) == 0);
+void index(string txtfile){
+    string fileContent = getFileContent(txtfile);
+    SuffixArray sa = SuffixArray();
+    basename(txtfile);
+    sa.index(txtfile, fileContent);
 }
