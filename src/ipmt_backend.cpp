@@ -2,10 +2,41 @@
 
 struct SuffixArray
 {
-    char T[MAX_N];
+
+    char *T;
     int n;
-    int RA[MAX_N], tempRA[MAX_N], SA[MAX_N], tempSA[MAX_N], c[MAX_N];
+    int *RA, *tempRA, *SA, *tempSA, *c;
     vi occs;
+
+    SuffixArray(int size) {
+        init(size);
+    }
+
+    ~SuffixArray( ) {
+        delete[] T;
+        delete[] RA;
+        delete[] tempRA;
+        delete[] SA;
+        delete[] tempSA;
+        delete[] c;
+    }
+
+    void init(int sz) {
+        sz += 100;
+        T = new char[sz];
+        RA = new int[sz];
+        tempRA = new int[sz];
+        SA = new int[sz];
+        tempSA = new int[sz];
+        c = new int[sz];
+
+        memset(T, ' ', sz*sizeof(char));
+        memset(RA, 0, sz*sizeof(int));
+        memset(tempRA, 0, sz*sizeof(int));
+        memset(SA, 0, sz*sizeof(int));
+        memset(tempSA, 0, sz*sizeof(int));
+        memset(c, 0, sz*sizeof(int));        
+    }
 
     void countingSort(int k) {
         int i, sum, maxi = max(ALPHABET_SIZE, n);
@@ -86,6 +117,27 @@ struct SuffixArray
         n = content.size();
         constructSA();
         dumpSA(filename);
+    }
+
+    string get_line_from_match(int pos) {
+        int from = 0, to = 0;
+        for (int i=pos; i < n; ++i) {
+            if (T[i] == '\n') {
+                from = i;
+                break;
+            }
+        }
+        for (int i=pos; i >= 0; --i) {
+            if (T[i] == '\n') {
+                to = i;
+                break;
+            }
+        }
+        string ret = "";
+        for (int i=from; i <= to; ++i) {
+            ret += T[i];
+        }
+        return ret;
     }
 };
 
@@ -176,7 +228,7 @@ string getFileContent(string &textFile)
 
 void index(string txtfile){
     string fileContent = getFileContent(txtfile);
-    SuffixArray sa = SuffixArray();
+    SuffixArray sa = SuffixArray(fileContent.length());
     basename(txtfile);
     sa.index(txtfile, fileContent);
 }

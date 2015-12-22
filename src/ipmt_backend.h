@@ -28,6 +28,7 @@
 #define CHECK_BIT(var,pos) ((var) & (1LL<<(pos)))
 #define MAX_N 10000
 #define ALPHABET_SIZE 256
+#define DEBUG(x) cout << x << endl;
 
 using namespace std;
 
