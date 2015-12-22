@@ -31,13 +31,16 @@
 
 using namespace std;
 
-typedef pair<int, int> ii;
+typedef pair<int,int> ii;
 typedef vector<string> vs;
 typedef vector<int> vi;
 typedef pair<string, int> psi;
 typedef vector<psi> v_psi;
 typedef unsigned long long ull;
 
+//vector<LZTuple> lz77_encode(string &str);
+
+void testencode(string s);
 void run_sarr_match(string &txtfile, string &pattern, bool silent);
 
 #endif

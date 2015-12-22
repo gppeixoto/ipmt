@@ -1,21 +1,5 @@
-#include <string>
+#include "ipmt_backend.h"
 
-#include <vector>
-#include <queue>
-#include <iostream>
-#include <cstring>
-#include <set>
-
-#include <getopt.h>
-#include <stdlib.h>
-#include <fstream>
-#include <dirent.h>
-#include <sys/types.h>
-#include <assert.h>
-
-#include <glob.h>
-
-using namespace std;
 
 void help()
 {
@@ -92,8 +76,8 @@ int main(int argc, char** argv){
                 break;
         }
     }
-
     if (options >= argc || argc == 1){
+    cout << "alo "  << endl;
         help();
     }
 
@@ -113,11 +97,6 @@ int main(int argc, char** argv){
             while (infile >> pat){
                 patterns.push_back(pat);
             }
-
-            if (argc <= options+1){
-                cout << "Insira um ou mais arquivos de texto para realizar a busca" << endl;
-                help();
-            }
         }
     }
 
@@ -128,7 +107,9 @@ int main(int argc, char** argv){
             textfiles.push_back(match);
         }
     }
-    
+    for (auto str : patterns) {
+        testencode(str);
+    }
     if(isIndex){
         for (string &file : textfiles){
             if (isSuffixArray){

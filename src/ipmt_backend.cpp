@@ -104,6 +104,73 @@ void run_sarr_match(string &txtfile, string &pattern, bool silent) {
     // todo
 }
 
-int main(){
-    return 0;
+struct LZTuple
+{
+    int pos;
+    int tam;
+    char c;
+    LZTuple(int p, int t, char ch){
+        pos = p;
+        tam = t;
+        c = ch;
+    }
+};
+
+vector<LZTuple> lz77_encode(string &str){
+    int window_size = 8;
+    int buffer_size = 4;
+
+    vector<LZTuple> ret;
+    int i = 0, beginWindow;
+    string window, buffer;
+    while(i < str.size()){
+        beginWindow = i - window_size;
+        if(beginWindow < 0){
+            beginWindow = 0;
+        }
+        window = str.substr(beginWindow, i - beginWindow);
+        buffer = str.substr(i, buffer_size);
+        LZTuple tuple = LZTuple(0,0,str[i]);
+        for (int k = buffer.size(); k >= 0; --k)
+        {
+            int index = window.find(buffer.substr(0,k));
+            if(index != -1){//found
+                char literal = '&';
+                if(i + k < str.size()){
+                    literal = str[i+k];
+                }
+                tuple = LZTuple(window.size() - index-1, k, literal);
+                break;
+            }
+        }
+        i += tuple.tam + 1;
+        ret.push_back(tuple);
+    }
+    return ret;
+}
+
+string lz77_decode(vector<LZTuple> vec){
+    string ret = "";
+    int pos;
+    for(auto tuple : vec){
+        pos = ret.size() - tuple.pos - 1;
+        ret.append(ret.substr(pos, tuple.tam));
+        if(tuple.c == '&')break;
+        ret.append(1,tuple.c);
+    }
+    return ret;
+}
+
+void printencode(string s){
+    vector<LZTuple> vec = lz77_encode(s);
+
+    for (auto tuple : vec)
+    {
+        cout << tuple.pos << " " << tuple.tam << " " << tuple.c << endl;
+    }
+}
+
+void testencode(string s){
+
+    assert (s.compare(lz77_decode(lz77_encode(s))) == 0);
 }
