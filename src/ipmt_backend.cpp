@@ -104,11 +104,15 @@ struct SuffixArray
     }
 
     void dumpSA(string &filename) {
+        filename += ".idx";
         ofstream ofs;
         ofs.open(filename, ofstream::trunc);
         ofs << n;
-        for (int i=0; i < n; ++i)
-            ofs << SA[i] << ' ';
+        ofs << ' ';
+        for (int i=0; i < n; ++i){
+            if (i != n-1) ofs << SA[i] << ' ';
+            else ofs << SA[i];
+        }
         ofs.close();
     }
 
@@ -117,7 +121,6 @@ struct SuffixArray
         strncpy(T, content.c_str(), content.size());
         n = content.size();
         constructSA();
-        dumpSA(filename);
     }
 
     string get_line_from_match(int pos) {
@@ -239,13 +242,12 @@ string getFileContent(string &textFile)
 }
 
 void dumpText(string &filename, string &txt){
-    filename += ".idx";
     ofstream ofs;
     ofs.open(filename, ofstream::app);
     ofs << endl;
     vector<LZTuple> tuples = lz77_encode(txt);
     for(auto tuple : tuples){
-        ofs << tuple.pos << "," << tuple.tam << "," << tuple.c << endl;
+        ofs << tuple.pos << " " << tuple.tam << " " << tuple.c << endl;
     }
     ofs.close();
 }
@@ -256,6 +258,6 @@ void index(string &txtfile)
     SuffixArray sa = SuffixArray(fileContent.size());
     basename(txtfile);
     sa.index(txtfile, fileContent);
+    sa.dumpSA(txtfile);
     dumpText(txtfile, fileContent);
-    ii pos = sa.stringMatch("ad");
 }
