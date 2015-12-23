@@ -2,19 +2,28 @@
 
 struct SuffixArray
 {
-
     char *T;
     int n;
     int *RA, *tempRA, *SA, *tempSA, *c;
     vi occs;
+    int arraySize;
 
-    SuffixArray(int size) {
-        init(size);
+    SuffixArray(int sz){
+        arraySize = 2*sz + 400;
+        RA = new int[arraySize];
+        memset(RA,0, arraySize * sizeof(int));
+        SA = new int[arraySize];
+        memset(SA,0, arraySize * sizeof(int));
+        tempRA = new int[arraySize];
+        memset(tempRA,0, arraySize * sizeof(int));
+        tempSA = new int[arraySize];
+        memset(tempSA,0, arraySize * sizeof(int));
+        c = new int[arraySize];       
+        memset(c,0, arraySize * sizeof(int));
+        T = new char[arraySize];
+        memset(T,0, arraySize);   
     }
 
-    SuffixArray(string idxfile) {
-        init_from_idx(idxfile);
-    }
 
     ~SuffixArray( ) {
         delete[] T;
@@ -36,32 +45,12 @@ struct SuffixArray
         memset(SA, 0, sz*sizeof(int));
         T = new char[sz];
         memset(T, ' ', sz*sizeof(char));
-        load_text_from_idx(idxfile);
+        // load_text_from_idx(idxfile);
     }
-
-    void init(int sz) {
-        n = sz;
-        sz += 100;
-        T = new char[sz];
-        RA = new int[sz];
-        tempRA = new int[sz];
-        SA = new int[sz];
-        tempSA = new int[sz];
-        c = new int[sz];
-
-        memset(T, ' ', sz*sizeof(char));
-        memset(RA, 0, sz*sizeof(int));
-        memset(tempRA, 0, sz*sizeof(int));
-        memset(SA, 0, sz*sizeof(int));
-        memset(tempSA, 0, sz*sizeof(int));
-        memset(c, 0, sz*sizeof(int));        
-    }
-
-
 
     void countingSort(int k) {
         int i, sum, maxi = max(ALPHABET_SIZE, n);
-        memset(c, 0, sizeof c);
+        memset(c, 0, arraySize * sizeof(int));
         for (i=0; i < n; ++i)
             c[i + k < n ? RA[i + k] : 0]++;
         for (i = sum = 0; i < maxi; ++i) {
@@ -126,7 +115,7 @@ struct SuffixArray
 
     void index(string filename, string content){
         filename += ".idx";
-        strncpy(T, content.c_str(), sizeof(T));
+        strncpy(T, content.c_str(), content.size());
         n = content.size();
         constructSA();
         dumpSA(filename);
@@ -151,6 +140,10 @@ struct SuffixArray
             ret += T[i];
         }
         return ret;
+    }
+    void print(){
+        for (int i=0; i < n; ++i)
+        printf("%2d\t%s\n", SA[i], T + SA[i]);
     }
 };
 
@@ -245,7 +238,8 @@ string getFileContent(string &textFile)
 
 void index(string &txtfile){
     string fileContent = getFileContent(txtfile);
-    SuffixArray sa = SuffixArray(fileContent.length());
+    SuffixArray sa = SuffixArray(fileContent.size());
     basename(txtfile);
     sa.index(txtfile, fileContent);
+    sa.print();
 }
