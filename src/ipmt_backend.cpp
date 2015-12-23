@@ -25,23 +25,18 @@ struct SuffixArray
         delete[] c;
     }
 
-    void init_from_idx(string idxfile) {
+    void init_from_idx(string &idxfile) {
         ifstream idx(idxfile);
         if (!idx.good())
             cout << ".idx nao foi gerado corretamente" << endl;
-        n >> idx; //read size to n
+        idx >> n;
         int sz = n + 100;
+        SA = new int[sz];
+        for (int i=0; i < n; ++i) idx >> SA[i];
+        memset(SA, 0, sz*sizeof(int));
         T = new char[sz];
         memset(T, ' ', sz*sizeof(char));
-        //load_text_from_idx(idxfile);
-        SA = new int[sz];
-        memset(SA, 0, sz*sizeof(int));
-        string line;
-        int i=0;
-        while (getline(idx, line)) {
-            SA[i] = stoi(line);
-            ++i;
-        }
+        load_text_from_idx(idxfile);
     }
 
     void init(int sz) {
@@ -87,7 +82,9 @@ struct SuffixArray
             countingSort(0);
             tempRA[SA[0]] = r = 0;
             for (i=1; i < n; ++i)
-                tempRA[SA[i]] = (RA[SA[i]] == RA[SA[i-1]] && RA[SA[i]+k] == RA[SA[i-1]+k]) ? r : ++r;
+                tempRA[SA[i]] = 
+                    (RA[SA[i]] == RA[SA[i-1]] && RA[SA[i]+k] == RA[SA[i-1]+k])?
+                    r : ++r;
             for (i=0; i < n; ++i)
                 RA[i] = tempRA[i];
             if (RA[SA[n-1]] == n-1) break;
@@ -121,9 +118,9 @@ struct SuffixArray
     void dumpSA(string &filename) {
         ofstream ofs;
         ofs.open(filename);
-        ofs << n << endl; 
+        ofs << n;
         for (int i=0; i < n; ++i)
-            ofs << SA[i] << endl;
+            ofs << SA[i] << ' ';
         ofs.close();
     }
 
@@ -162,7 +159,7 @@ void run_sarr_match(string &txtfile, string &pattern, bool silent) {
 }
 
 void load_text_from_idx(string &idxfile) {
-    
+
 }
 
 struct LZTuple
@@ -246,7 +243,7 @@ string getFileContent(string &textFile)
     return input.substr(0, input.length()-1);
 }
 
-void index(string txtfile){
+void index(string &txtfile){
     string fileContent = getFileContent(txtfile);
     SuffixArray sa = SuffixArray(fileContent.length());
     basename(txtfile);
