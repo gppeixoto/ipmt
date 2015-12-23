@@ -106,7 +106,7 @@ struct SuffixArray
 
     void dumpSA(string &filename) {
         ofstream ofs;
-        ofs.open(filename);
+        ofs.open(filename, ofstream::trunc);
         ofs << n;
         for (int i=0; i < n; ++i)
             ofs << SA[i] << ' ';
@@ -230,10 +230,22 @@ string getFileContent(string &textFile)
     }
     string line;
     while ( getline( infile, line) ) {
-        line += '\n';
+        line += '$';
         input += line;
     }
     return input.substr(0, input.length()-1);
+}
+
+void dumpText(string &filename, string &txt){
+    filename += ".idx";
+    ofstream ofs;
+    ofs.open(filename, ofstream::app);
+    ofs << endl;
+    vector<LZTuple> tuples = lz77_encode(txt);
+    for(auto tuple : tuples){
+        ofs << tuple.pos << "," << tuple.tam << "," << tuple.c << endl;
+    }
+    ofs.close();
 }
 
 void index(string &txtfile){
@@ -241,5 +253,6 @@ void index(string &txtfile){
     SuffixArray sa = SuffixArray(fileContent.size());
     basename(txtfile);
     sa.index(txtfile, fileContent);
-    sa.print();
+    dumpText(txtfile, fileContent);
+    //sa.print();
 }
