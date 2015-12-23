@@ -39,6 +39,6 @@ typedef pair<string, int> psi;
 typedef vector<psi> v_psi;
 typedef unsigned long long ull;
 
-void index(string txtfile);
+void index(string &txtfile);
 
 #endif

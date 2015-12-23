@@ -110,7 +110,7 @@ int main(int argc, char** argv){
     }
 
     if(isIndex){
-        for (string file : textfiles){
+        for (string &file : textfiles){
             index(file);
         }
     }

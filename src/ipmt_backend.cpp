@@ -9,59 +9,25 @@ struct SuffixArray
     vi occs;
 
     SuffixArray(int size) {
-        init(size);
+        n = size;
+        size *= 2; size += 400;
+        T = new char[size];
+        memset(T, 0, size);
+        RA = new int[size];
+        memset(RA, 0, size*sizeof(int));
+        tempRA = new int[size];
+        memset(tempRA, 0, size*sizeof(int));
+        SA = new int[size];
+        memset(SA, 0, size*sizeof(int));
+        tempSA = new int[size];
+        memset(tempSA, 0, size*sizeof(int));
+        c = new int[size];
+        memset(c, 0, size*sizeof(int));
     }
-
-    SuffixArray(string idxfile) {
-        init_from_idx(idxfile);
-    }
-
-    ~SuffixArray( ) {
-        delete[] T;
-        delete[] RA;
-        delete[] tempRA;
-        delete[] SA;
-        delete[] tempSA;
-        delete[] c;
-    }
-
-    void init_from_idx(string &idxfile) {
-        ifstream idx(idxfile);
-        if (!idx.good())
-            cout << ".idx nao foi gerado corretamente" << endl;
-        idx >> n;
-        int sz = n + 100;
-        SA = new int[sz];
-        for (int i=0; i < n; ++i) idx >> SA[i];
-        memset(SA, 0, sz*sizeof(int));
-        T = new char[sz];
-        memset(T, ' ', sz*sizeof(char));
-        load_text_from_idx(idxfile);
-    }
-
-    void init(int sz) {
-        n = sz;
-        sz += 100;
-        T = new char[sz];
-        RA = new int[sz];
-        tempRA = new int[sz];
-        SA = new int[sz];
-        tempSA = new int[sz];
-        c = new int[sz];
-
-        memset(T, ' ', sz*sizeof(char));
-        memset(RA, 0, sz*sizeof(int));
-        memset(tempRA, 0, sz*sizeof(int));
-        memset(SA, 0, sz*sizeof(int));
-        memset(tempSA, 0, sz*sizeof(int));
-        memset(c, 0, sz*sizeof(int));        
-    }
-
-
 
     void countingSort(int k) {
-        int i, sum, maxi = max(ALPHABET_SIZE, n);
-        memset(c, 0, sizeof c);
+        int i, sum, maxi = max(300, n);
+        memset(c, 0, n*sizeof(int));
         for (i=0; i < n; ++i)
             c[i + k < n ? RA[i + k] : 0]++;
         for (i = sum = 0; i < maxi; ++i) {
@@ -72,7 +38,7 @@ struct SuffixArray
         for (i=0; i < n; ++i)
             SA[i] = tempSA[i];
     }
-
+    
     void constructSA() {
         int i, k, r;
         for (i=0; i < n; ++i) RA[i] = T[i];
@@ -82,85 +48,37 @@ struct SuffixArray
             countingSort(0);
             tempRA[SA[0]] = r = 0;
             for (i=1; i < n; ++i)
-                tempRA[SA[i]] = 
-                    (RA[SA[i]] == RA[SA[i-1]] && RA[SA[i]+k] == RA[SA[i-1]+k])?
-                    r : ++r;
+                tempRA[SA[i]] = (RA[SA[i]] == RA[SA[i-1]] && RA[SA[i]+k] == RA[SA[i-1]+k]) ? r : ++r;
             for (i=0; i < n; ++i)
                 RA[i] = tempRA[i];
             if (RA[SA[n-1]] == n-1) break;
         }
     }
 
-    ii stringMatch(string pat) {
-        int lo = 0, hi = n-1, mid = lo, m = pat.length();
-        char P[m];
-        strncpy(P, pat.c_str(), sizeof(P));
-        while (lo < hi) {
-            mid = (lo + hi) / 2;
-            int res = strncmp(T + SA[mid], P, m);
-            if (res >= 0) hi = mid;
-            else lo = mid + 1;
-        }
-        if (strncmp(T + SA[lo], P, m) != 0) return ii(-1, -1); //not found 404
-        ii ans; ans.first = lo;
-        lo = 0; hi = n-1; mid = lo;
-        while (lo < hi) {
-            mid = (lo + hi) / 2;
-            int res = strncmp(T + SA[mid], P, m);
-            if (res > 0) hi = mid;
-            else lo = mid+1;
-        }
-        if (strncmp(T + SA[hi], P, m) != 0) --hi;
-        ans.second = hi;
-        return ans;
+    void debugSA() {
+        for (int i=0; i < n; ++i)
+            printf("%2d\t%s\n", SA[i], T + SA[i]);    
     }
 
     void dumpSA(string &filename) {
         ofstream ofs;
         ofs.open(filename);
-        ofs << n;
+        ofs << n << ' ';
         for (int i=0; i < n; ++i)
             ofs << SA[i] << ' ';
         ofs.close();
     }
 
-    void index(string filename, string content){
+    void index(string filename, string content) {
         filename += ".idx";
-        strncpy(T, content.c_str(), sizeof(T));
-        n = content.size();
+        strncpy(T, content.c_str(), content.size());
+        for (int i=0; i < n; ++i) cout << T[i];
+        cout << endl;
         constructSA();
-        dumpSA(filename);
-    }
-
-    string get_line_from_match(int pos) {
-        int from = 0, to = 0;
-        for (int i=pos; i < n; ++i) {
-            if (T[i] == '\n') {
-                from = i;
-                break;
-            }
-        }
-        for (int i=pos; i >= 0; --i) {
-            if (T[i] == '\n') {
-                to = i;
-                break;
-            }
-        }
-        string ret = "";
-        for (int i=from; i <= to; ++i) {
-            ret += T[i];
-        }
-        return ret;
+        debugSA();
+        // dumpSA(filename);
     }
 };
-
-void run_sarr_match(string &txtfile, string &pattern, bool silent) {
-    
-}
-
-void load_text_from_idx(string &idxfile) {
-
-}
 
 struct LZTuple
 {
@@ -186,9 +104,10 @@ vector<LZTuple> lz77_encode(string &str){
     int buffer_size = 4;
 
     vector<LZTuple> ret;
-    int i = 0, beginWindow;
+    int beginWindow;
     string window, buffer;
-    while(i < str.size()){
+    unsigned long i = 0;
+    while (i < str.size()) {
         beginWindow = i - window_size;
         if(beginWindow < 0){
             beginWindow = 0;
