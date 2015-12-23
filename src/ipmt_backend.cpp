@@ -21,11 +21,10 @@ struct SuffixArray
         c = new int[arraySize];       
         memset(c,0, arraySize * sizeof(int));
         T = new char[arraySize];
-        memset(T,0, arraySize);   
+        memset(T,0, arraySize);
     }
 
-
-    ~SuffixArray( ) {
+    ~SuffixArray() {
         delete[] T;
         delete[] RA;
         delete[] tempRA;
@@ -79,7 +78,7 @@ struct SuffixArray
             if (RA[SA[n-1]] == n-1) break;
         }
     }
-
+    
     ii stringMatch(string pat) {
         int lo = 0, hi = n-1, mid = lo, m = pat.length();
         char P[m];
@@ -141,9 +140,10 @@ struct SuffixArray
         }
         return ret;
     }
-    void print(){
+
+    void debugSA(){
         for (int i=0; i < n; ++i)
-        printf("%2d\t%s\n", SA[i], T + SA[i]);
+            printf("%2d\t%s\n", SA[i], T + SA[i]);
     }
 };
 
@@ -167,14 +167,16 @@ struct LZTuple
     }
 };
 
-void basename(string &filename){
+void basename(string &filename)
+{
     const size_t period_idx = filename.rfind('.');
     if (string::npos != period_idx){
         filename.erase(period_idx);
     }
 }
 
-vector<LZTuple> lz77_encode(string &str){
+vector<LZTuple> lz77_encode(string &str)
+{
     int window_size = 8;
     int buffer_size = 4;
 
@@ -207,7 +209,8 @@ vector<LZTuple> lz77_encode(string &str){
     return ret;
 }
 
-string lz77_decode(vector<LZTuple> vec){
+string lz77_decode(vector<LZTuple> vec)
+{
     string ret = "";
     int pos;
     for(auto tuple : vec){
@@ -218,7 +221,6 @@ string lz77_decode(vector<LZTuple> vec){
     }
     return ret;
 }
-
 
 string getFileContent(string &textFile)
 {
@@ -248,11 +250,12 @@ void dumpText(string &filename, string &txt){
     ofs.close();
 }
 
-void index(string &txtfile){
+void index(string &txtfile)
+{
     string fileContent = getFileContent(txtfile);
     SuffixArray sa = SuffixArray(fileContent.size());
     basename(txtfile);
     sa.index(txtfile, fileContent);
     dumpText(txtfile, fileContent);
-    //sa.print();
+    ii pos = sa.stringMatch("ad");
 }
