@@ -12,6 +12,10 @@ struct SuffixArray
         init(size);
     }
 
+    SuffixArray(string idxfile) {
+        init_from_idx(idxfile);
+    }
+
     ~SuffixArray( ) {
         delete[] T;
         delete[] RA;
@@ -21,7 +25,27 @@ struct SuffixArray
         delete[] c;
     }
 
+    void init_from_idx(string idxfile) {
+        ifstream idx(idxfile);
+        if (!idx.good())
+            cout << ".idx nao foi gerado corretamente" << endl;
+        n >> idx; //read size to n
+        int sz = n + 100;
+        T = new char[sz];
+        memset(T, ' ', sz*sizeof(char));
+        //load_text_from_idx(idxfile);
+        SA = new int[sz];
+        memset(SA, 0, sz*sizeof(int));
+        string line;
+        int i=0;
+        while (getline(idx, line)) {
+            SA[i] = stoi(line);
+            ++i;
+        }
+    }
+
     void init(int sz) {
+        n = sz;
         sz += 100;
         T = new char[sz];
         RA = new int[sz];
@@ -37,6 +61,8 @@ struct SuffixArray
         memset(tempSA, 0, sz*sizeof(int));
         memset(c, 0, sz*sizeof(int));        
     }
+
+
 
     void countingSort(int k) {
         int i, sum, maxi = max(ALPHABET_SIZE, n);
@@ -95,20 +121,10 @@ struct SuffixArray
     void dumpSA(string &filename) {
         ofstream ofs;
         ofs.open(filename);
+        ofs << n << endl; 
         for (int i=0; i < n; ++i)
             ofs << SA[i] << endl;
         ofs.close();
-    }
-
-    void readSA(string &filename) {
-        ifstream ifs(filename);
-        if (!ifs.good()) cout << "Arquivo de texto nao foi indexado" << endl;
-        string line;
-        int i = 0;
-        while (getline(ifs, line)) {
-            SA[i] = stoi(line);
-            ++i;
-        }
     }
 
     void index(string filename, string content){
@@ -142,7 +158,11 @@ struct SuffixArray
 };
 
 void run_sarr_match(string &txtfile, string &pattern, bool silent) {
-    // todo
+    
+}
+
+void load_text_from_idx(string &idxfile) {
+    
 }
 
 struct LZTuple

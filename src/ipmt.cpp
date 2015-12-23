@@ -87,15 +87,17 @@ int main(int argc, char** argv){
             patterns.push_back(pat);
         }else{
             ifstream infile(patternFile);
-
             if (!infile.good()){
                 cout << "Arquivo de padrão << " << patternFile << " >> inválido" << endl;
             }
-
             string pat;
             while (infile >> pat){
                 patterns.push_back(pat);
             }
+            //TODO: busca aqui
+            //1: descomprimir o .idx
+            //2: carregar o array de sufixo
+            //3: chamar o match
         }
     }
 
