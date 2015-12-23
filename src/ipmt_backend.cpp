@@ -2,14 +2,31 @@
 
 struct SuffixArray
 {
-    char T[MAX_N];
+    char *T;
     int n;
-    int RA[MAX_N], tempRA[MAX_N], SA[MAX_N], tempSA[MAX_N], c[MAX_N];
+    int *RA, *tempRA, *SA, *tempSA, *c;
     vi occs;
+    int arraySize;
+
+    SuffixArray(int sz){
+        arraySize = 2*sz + 400;
+        RA = new int[arraySize];
+        memset(RA,0, arraySize * sizeof(int));
+        SA = new int[arraySize];
+        memset(SA,0, arraySize * sizeof(int));
+        tempRA = new int[arraySize];
+        memset(tempRA,0, arraySize * sizeof(int));
+        tempSA = new int[arraySize];
+        memset(tempSA,0, arraySize * sizeof(int));
+        c = new int[arraySize];       
+        memset(c,0, arraySize * sizeof(int));
+        T = new char[arraySize];
+        memset(T,0, arraySize);   
+    }
 
     void countingSort(int k) {
         int i, sum, maxi = max(ALPHABET_SIZE, n);
-        memset(c, 0, sizeof c);
+        memset(c, 0, arraySize * sizeof(int));
         for (i=0; i < n; ++i)
             c[i + k < n ? RA[i + k] : 0]++;
         for (i = sum = 0; i < maxi; ++i) {
@@ -82,10 +99,14 @@ struct SuffixArray
 
     void index(string filename, string content){
         filename += ".idx";
-        strncpy(T, content.c_str(), sizeof(T));
+        strncpy(T, content.c_str(), content.size());
         n = content.size();
         constructSA();
         dumpSA(filename);
+    }
+    void print(){
+        for (int i=0; i < n; ++i)
+        printf("%2d\t%s\n", SA[i], T + SA[i]);
     }
 };
 
@@ -176,7 +197,8 @@ string getFileContent(string &textFile)
 
 void index(string txtfile){
     string fileContent = getFileContent(txtfile);
-    SuffixArray sa = SuffixArray();
+    SuffixArray sa = SuffixArray(fileContent.size());
     basename(txtfile);
     sa.index(txtfile, fileContent);
+    sa.print();
 }
