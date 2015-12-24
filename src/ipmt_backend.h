@@ -40,5 +40,6 @@ typedef vector<psi> v_psi;
 typedef unsigned long long ull;
 
 void index(string &txtfile);
+void search(string &txtfile);
 
 #endif

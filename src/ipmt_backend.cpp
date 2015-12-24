@@ -154,9 +154,6 @@ void run_sarr_match(string &txtfile, string &pattern, bool silent) {
     
 }
 
-void load_text_from_idx(string &idxfile) {
-
-}
 
 struct LZTuple
 {
@@ -169,14 +166,6 @@ struct LZTuple
         c = ch;
     }
 };
-
-void basename(string &filename)
-{
-    const size_t period_idx = filename.rfind('.');
-    if (string::npos != period_idx){
-        filename.erase(period_idx);
-    }
-}
 
 vector<LZTuple> lz77_encode(string &str)
 {
@@ -225,6 +214,49 @@ string lz77_decode(vector<LZTuple> vec)
     return ret;
 }
 
+SuffixArray load_idx(string &idxfile) {
+    ifstream infile(idxfile);
+    string input = "";
+    if (!infile.good()) {
+        cout << "Arquivo idx << " << idxfile << " >> inválido" << endl;
+        exit(1);
+    }
+    string line;
+    int count;
+    infile >> count;
+    SuffixArray sa = SuffixArray(count);
+    sa.n = count;
+    for (int i = 0; i < count; ++i) {
+        infile >> sa.SA[i];
+    }
+    string s;
+    int pos, tam;
+    char c;
+    vector<LZTuple> vec;
+    while (infile >> s) {
+        pos = stoi(s);
+        infile >> s;
+        tam = stoi(s);
+        infile >> s;
+        c = s[0];
+        if(c == '&'){
+            c = '\n';
+        }
+        vec.push_back(LZTuple(pos,tam,c));
+    }
+    s = lz77_decode(vec);
+    strncpy(sa.T, s.c_str(), s.size());
+    return sa;
+}
+
+void basename(string &filename)
+{
+    const size_t period_idx = filename.rfind('.');
+    if (string::npos != period_idx){
+        filename.erase(period_idx);
+    }
+}
+
 string getFileContent(string &textFile)
 {
     ifstream infile(textFile);
@@ -246,7 +278,7 @@ void dumpText(string &filename, string &txt){
     ofs.open(filename, ofstream::app);
     ofs << endl;
     vector<LZTuple> tuples = lz77_encode(txt);
-    for(auto tuple : tuples){
+    for(auto &tuple : tuples){
         ofs << tuple.pos << " " << tuple.tam << " " << tuple.c << endl;
     }
     ofs.close();
@@ -260,4 +292,9 @@ void index(string &txtfile)
     sa.index(txtfile, fileContent);
     sa.dumpSA(txtfile);
     dumpText(txtfile, fileContent);
+}
+
+void search(string &txtfile){
+    SuffixArray sa = load_idx(txtfile);
+    //search here
 }

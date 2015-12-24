@@ -94,10 +94,6 @@ int main(int argc, char** argv){
             while (infile >> pat){
                 patterns.push_back(pat);
             }
-            //TODO: busca aqui
-            //1: descomprimir o .idx
-            //2: carregar o array de sufixo
-            //3: chamar o match
         }
     }
 
@@ -112,6 +108,10 @@ int main(int argc, char** argv){
     if(isIndex){
         for (string &file : textfiles){
             index(file);
+        }
+    }else{
+        for (string &file : textfiles){
+            search(file);
         }
     }
 	
