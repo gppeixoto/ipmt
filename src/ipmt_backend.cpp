@@ -149,8 +149,8 @@ struct LZTuple
 
 vector<LZTuple> lz77_encode(string &str)
 {
-    int window_size = 8;
-    int buffer_size = 4;
+    int window_size = 1024;
+    int buffer_size = 128;
 
     vector<LZTuple> ret;
     int i = 0, beginWindow;
@@ -281,9 +281,6 @@ int search(string &idxfile, string &pat, bool silent)
     ii pos = sa.stringMatch(pat);
     if (pos.first == -1 || pos.second == -1)
         return -1; //not found
-    // for (int i=pos.first; i<=pos.second; ++i) {
-    //     cout << sa.T + sa.SA[i] << endl;
-    // }
     int num_occs = pos.second-pos.first+1;
     if (silent)
         return num_occs;
