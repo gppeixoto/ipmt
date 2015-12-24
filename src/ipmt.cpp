@@ -111,7 +111,10 @@ int main(int argc, char** argv){
         }
     }else{
         for (string &file : textfiles){
-            search(file);
+            for (string &pat : patterns) {
+                int num_occs = search(file, pat, false);
+                DEBUG(num_occs); 
+            }
         }
     }
 	

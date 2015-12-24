@@ -28,7 +28,7 @@
 #define CHECK_BIT(var,pos) ((var) & (1LL<<(pos)))
 #define MAX_N 10000
 #define ALPHABET_SIZE 256
-#define DEBUG(x) cout << x << endl;
+#define DEBUG(x) cout << #x << " = " << x << endl;
 
 using namespace std;
 
@@ -37,9 +37,10 @@ typedef vector<string> vs;
 typedef vector<int> vi;
 typedef pair<string, int> psi;
 typedef vector<psi> v_psi;
+typedef vector<ii> vii;
 typedef unsigned long long ull;
 
 void index(string &txtfile);
-void search(string &txtfile);
+int search(string &idxfile, string &pat, bool silent);
 
 #endif

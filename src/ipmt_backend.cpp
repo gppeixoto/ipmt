@@ -8,7 +8,7 @@ struct SuffixArray
     vi occs;
     int arraySize;
 
-    SuffixArray(int sz){
+    SuffixArray(int sz) {
         arraySize = 2*sz + 400;
         RA = new int[arraySize];
         memset(RA,0, arraySize * sizeof(int));
@@ -18,7 +18,7 @@ struct SuffixArray
         memset(tempRA,0, arraySize * sizeof(int));
         tempSA = new int[arraySize];
         memset(tempSA,0, arraySize * sizeof(int));
-        c = new int[arraySize];       
+        c = new int[arraySize];
         memset(c,0, arraySize * sizeof(int));
         T = new char[arraySize];
         memset(T,0, arraySize);
@@ -31,20 +31,6 @@ struct SuffixArray
         delete[] SA;
         delete[] tempSA;
         delete[] c;
-    }
-
-    void init_from_idx(string &idxfile) {
-        ifstream idx(idxfile);
-        if (!idx.good())
-            cout << ".idx nao foi gerado corretamente" << endl;
-        idx >> n;
-        int sz = n + 100;
-        SA = new int[sz];
-        for (int i=0; i < n; ++i) idx >> SA[i];
-        memset(SA, 0, sz*sizeof(int));
-        T = new char[sz];
-        memset(T, ' ', sz*sizeof(char));
-        // load_text_from_idx(idxfile);
     }
 
     void countingSort(int k) {
@@ -124,23 +110,22 @@ struct SuffixArray
     }
 
     string get_line_from_match(int pos) {
-        int from = 0, to = 0;
-        for (int i=pos; i < n; ++i) {
-            if (T[i] == '\n') {
-                from = i;
+        // cout << T + pos << endl;
+        int beg = 0, end = n-1;
+        for (int i=pos; i >= 0; --i) {
+            if (T[i] == '$') {
+                beg = i+1;
                 break;
             }
         }
-        for (int i=pos; i >= 0; --i) {
-            if (T[i] == '\n') {
-                to = i;
+        for (int i=pos; i < n; ++i) {
+            if (T[i] == '$') {
+                end = i-1;
                 break;
             }
         }
         string ret = "";
-        for (int i=from; i <= to; ++i) {
-            ret += T[i];
-        }
+        for (int i=beg; i <= end; ++i) ret += T[i];
         return ret;
     }
 
@@ -149,11 +134,6 @@ struct SuffixArray
             printf("%2d\t%s\n", SA[i], T + SA[i]);
     }
 };
-
-void run_sarr_match(string &txtfile, string &pattern, bool silent) {
-    
-}
-
 
 struct LZTuple
 {
@@ -294,7 +274,22 @@ void index(string &txtfile)
     dumpText(txtfile, fileContent);
 }
 
-void search(string &txtfile){
-    SuffixArray sa = load_idx(txtfile);
-    //search here
+
+int search(string &idxfile, string &pat, bool silent)
+{
+    SuffixArray sa = load_idx(idxfile);
+    ii pos = sa.stringMatch(pat);
+    if (pos.first == -1 || pos.second == -1)
+        return -1; //not found
+    // for (int i=pos.first; i<=pos.second; ++i) {
+    //     cout << sa.T + sa.SA[i] << endl;
+    // }
+    int num_occs = pos.second-pos.first+1;
+    if (silent)
+        return num_occs;
+    int fst = pos.first, snd = pos.second;
+    for (int i=fst; i <= snd; ++i) {
+        cout << sa.get_line_from_match(sa.SA[i]) << endl;
+    }
+    return num_occs;
 }
