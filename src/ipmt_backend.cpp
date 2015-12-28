@@ -89,19 +89,6 @@ struct SuffixArray
         return ans;
     }
 
-    void dumpSA(string &filename) {
-        filename += ".idx";
-        ofstream ofs;
-        ofs.open(filename, ofstream::trunc);
-        ofs << n;
-        ofs << ' ';
-        for (int i=0; i < n; ++i){
-            if (i != n-1) ofs << SA[i] << ' ';
-            else ofs << SA[i];
-        }
-        ofs.close();
-    }
-
     void index(string filename, string content){
         filename += ".idx";
         strncpy(T, content.c_str(), content.size());
@@ -146,6 +133,57 @@ struct LZTuple
         c = ch;
     }
 };
+
+void vectorToString(vector<int> &v, string &ret){
+    ostringstream os;
+    
+    for (vector<int>::iterator it = v.begin() ; it != v.end(); ++it){
+        os << *it << ' ';
+    }
+    ret = os.str();
+}
+
+void vectorToString(int* arr, int len, string &ret){
+    ostringstream os;
+
+    for (int i = 0; i < len; ++i){
+        os << arr[i] << ' ';
+    }
+    ret = os.str();
+}
+
+void stringToVector(string &encoded, vector<int> &ret){
+    ret.clear();
+    int val;
+    stringstream ss(encoded);
+    while ( ss >> val ) {
+        ret.push_back(val);
+    }
+}
+
+void basename(string &filename)
+{
+    const size_t period_idx = filename.rfind('.');
+    if (string::npos != period_idx){
+        filename.erase(period_idx);
+    }
+}
+
+string getFileContent(string &textFile)
+{
+    ifstream infile(textFile);
+    string input = "";
+    if (!infile.good()) {
+        cout << "Arquivo de padrão << " << textFile << " >> inválido" << endl;
+        exit(1);
+    }
+    string line;
+    while ( getline( infile, line) ) {
+        line += '$';
+        input += line;
+    }
+    return input.substr(0, input.length()-1);
+}
 
 vector<LZTuple> lz77_encode(string &str)
 {
@@ -194,73 +232,117 @@ string lz77_decode(vector<LZTuple> vec)
     return ret;
 }
 
-SuffixArray load_idx(string &idxfile) {
+void lzw_encode(const string & text, string &ret)
+{
+    vector<int> encoded;
+    map<string,int> dictionary;
+    for (int i = 0; i < 256; i++){
+        dictionary[string(1, i)] = i;
+    }
+
+    string s = "";
+    char ch;
+
+    for ( int i = 0; i < (int) text.length(); i++){
+        ch = text[i];
+
+        string sch = s + ch;
+
+        if (dictionary.count(sch)){
+            s = sch;
+        }else{
+            encoded.push_back(dictionary[s]);
+            int size = dictionary.size() + 1;
+            dictionary[sch] = size;
+
+            s = ch;
+        }
+    }
+    if (! s.empty()){
+        encoded.push_back(dictionary[s]);
+    }
+
+    
+    vectorToString(encoded, ret);
+
+}
+
+void lzw_decode(string &encoded_str, string &ret)
+{
+    vector<int> encoded;
+    stringToVector(encoded_str, encoded);
+
+
+    map<int, string> dictionary;
+    for (int i = 0; i < ALPHABET_SIZE; i++){
+        dictionary[i] = string(1, i);
+    }
+
+    int prevcode, currcode;
+    string entry;
+    string aux;
+
+    prevcode = encoded[0];
+    ret = dictionary[prevcode];
+    aux = ret;
+    for (int i = 1; i < (int) encoded.size(); i++){
+        currcode = encoded[i];
+
+        if (dictionary.count(currcode)){
+            entry = dictionary[currcode];
+        } else{
+            entry = aux + aux[0];
+        }
+        ret += entry;
+
+        int size = dictionary.size() + 1;
+        dictionary[size] = aux + entry[0];
+
+        prevcode = currcode;
+        aux = entry;
+
+    }
+}
+
+
+SuffixArray load(string &idxfile) {
     ifstream infile(idxfile);
     string input = "";
     if (!infile.good()) {
-        cout << "Arquivo idx << " << idxfile << " >> inválido" << endl;
+        cout << "Arquivo de padrão << " << idxfile << " >> inválido" << endl;
         exit(1);
     }
-    string line;
-    int count;
-    infile >> count;
-    SuffixArray sa = SuffixArray(count);
-    sa.n = count;
-    for (int i = 0; i < count; ++i) {
-        infile >> sa.SA[i];
+    string line, ret;
+    getline(infile, line);
+    lzw_decode(line, ret);
+    vector<int> arr;
+    stringToVector(ret, arr);
+    getline(infile, line);
+    string content; 
+    lzw_decode(line, content);
+    SuffixArray sa = SuffixArray((int)arr.size());
+    for (int i = 0; i < (int) arr.size(); ++i){
+        sa.SA[i] = arr[i];
     }
-    string s;
-    int pos, tam;
-    char c;
-    vector<LZTuple> vec;
-    while (infile >> s) {
-        pos = stoi(s);
-        infile >> s;
-        tam = stoi(s);
-        infile >> s;
-        c = s[0];
-        if(c == '&'){
-            c = '\n';
-        }
-        vec.push_back(LZTuple(pos,tam,c));
-    }
-    s = lz77_decode(vec);
-    strncpy(sa.T, s.c_str(), s.size());
+    strncpy(sa.T, content.c_str(), content.size());
+    sa.n = content.size();
     return sa;
 }
 
-void basename(string &filename)
-{
-    const size_t period_idx = filename.rfind('.');
-    if (string::npos != period_idx){
-        filename.erase(period_idx);
-    }
-}
-
-string getFileContent(string &textFile)
-{
-    ifstream infile(textFile);
-    string input = "";
-    if (!infile.good()) {
-        cout << "Arquivo de padrão << " << textFile << " >> inválido" << endl;
-        exit(1);
-    }
-    string line;
-    while ( getline( infile, line) ) {
-        line += '$';
-        input += line;
-    }
-    return input.substr(0, input.length()-1);
-}
-
-void dumpText(string &filename, string &txt){
+void dump(SuffixArray &sa, string &fileContent, string &filename){
+    filename += ".idx";
+    ostringstream os;
+    string str, ret;
+    vectorToString(sa.SA, sa.n, str);
+    lzw_encode(str, ret);
+    os << ret;
+    os << '\n';
+    lzw_encode(fileContent, ret);
+    os << ret;
+    os << '\n';
     ofstream ofs;
-    ofs.open(filename, ofstream::app);
-    ofs << endl;
-    vector<LZTuple> tuples = lz77_encode(txt);
-    for(auto &tuple : tuples){
-        ofs << tuple.pos << " " << tuple.tam << " " << tuple.c << endl;
-    }
+    ofs.open(filename, ofstream::trunc);
+    ofs << os.str();
     ofs.close();
 }
 
@@ -269,15 +351,18 @@ void index(string &txtfile)
     string fileContent = getFileContent(txtfile);
     SuffixArray sa = SuffixArray(fileContent.size());
     basename(txtfile);
+    cout << "index" << endl;
     sa.index(txtfile, fileContent);
-    sa.dumpSA(txtfile);
-    dumpText(txtfile, fileContent);
+    cout << "dump" << endl;
+    dump(sa, fileContent, txtfile);
 }
 
 
 int search(string &idxfile, string &pat, bool silent)
 {
-    SuffixArray sa = load_idx(idxfile);
+    cout << "load" <<endl;
+    SuffixArray sa = load(idxfile);
+    cout << "match" << endl;
     ii pos = sa.stringMatch(pat);
     if (pos.first == -1 || pos.second == -1)
         return -1; //not found

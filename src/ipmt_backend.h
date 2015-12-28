@@ -6,8 +6,10 @@
 #include <vector>
 #include <queue>
 #include <iostream>
+#include <sstream>
 #include <cstring>
 #include <set>
+#include <map>
 #include <algorithm>
 #include <cstdio> 
 #include <getopt.h>
