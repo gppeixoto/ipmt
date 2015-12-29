@@ -114,6 +114,8 @@ int main(int argc, char** argv){
                 if(isCount){
                     int num_occs = search(file, pat, true);
                     cout << "Numero de ocorrencias de \"" << pat << "\" em " << file << ": " << num_occs << endl;
+                }else{
+                    search(file, pat, false);
                 }
             }
         }
