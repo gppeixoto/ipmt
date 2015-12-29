@@ -26,8 +26,8 @@ inline vector<string> getTextFiles(const string& pat){
 
 int main(int argc, char** argv){
     bool isIndex = false;
-    bool isSuffixArray = false;
     bool hasPatternFile = false;
+    bool isCount = false;
 
     string patternFile;
 
@@ -49,14 +49,13 @@ int main(int argc, char** argv){
         {
           {"help",       no_argument,       0, 'h'},
           {"pattern",    required_argument, 0, 'p'},
-          {"suffixarray", no_argument,      0, 's'},
+          {"count",       no_argument,      0, 'c'},
           {0, 0, 0, 0}
         };
         
         int option_index = 0;
 
-        c = getopt_long (argc, argv, "hp:s", long_options, &option_index); 
-
+        c = getopt_long (argc, argv, "hp:c", long_options, &option_index); 
         if (c == -1) break;
 
         switch (c){
@@ -65,8 +64,8 @@ int main(int argc, char** argv){
                 patternFile = optarg;
                 options += 2;
                 break;
-            case 'a':
-                isSuffixArray = true;
+            case 'c':
+                isCount = true;
                 options += 1;
                 break;
             case 'h':
@@ -112,7 +111,10 @@ int main(int argc, char** argv){
     }else{
         for (string &file : textfiles){
             for (string &pat : patterns) {
-                int num_occs = search(file, pat, false);
+                if(isCount){
+                    int num_occs = search(file, pat, true);
+                    cout << "Numero de ocorrencias de \"" << pat << "\" em " << file << ": " << num_occs << endl;
+                }
             }
         }
     }

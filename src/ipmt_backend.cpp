@@ -52,18 +52,14 @@ void index(string &txtfile)
     string fileContent = getFileContent(txtfile);
     SuffixArray sa = SuffixArray(fileContent.size());
     basename(txtfile);
-    cout << "index" << endl;
     sa.index(txtfile, fileContent);
-    cout << "dump" << endl;
     dump(sa, fileContent, txtfile);
 }
 
 
 int search(string &idxfile, string &pat, bool silent)
 {
-    cout << "load" <<endl;
     SuffixArray sa = load(idxfile);
-    cout << "match" << endl;
     pair<int,int> pos = sa.stringMatch(pat);
     if (pos.first == -1 || pos.second == -1)
         return -1; //not found
