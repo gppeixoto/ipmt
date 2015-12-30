@@ -1,14 +1,13 @@
-#include "CompressionAlgorithm.cpp"
 #include "Util.h"
 
 using namespace std;
 
-class LZW : CompressionAlgorithm{
+class LZW {
 public:
 	string encode(string &str){
 		string ret;
 		vector<int> encoded;
-	    map<string,int> dictionary;
+	    unordered_map<string,int> dictionary;
 	    for (int i = 0; i < 256; i++){
 	        dictionary[string(1, i)] = i;
 	    }
@@ -21,7 +20,7 @@ public:
 
 	        string sch = s + ch;
 
-	        if (dictionary.count(sch)){
+	        if (dictionary.find(sch) != dictionary.end()){
 	            s = sch;
 	        }else{
 	            encoded.push_back(dictionary[s]);

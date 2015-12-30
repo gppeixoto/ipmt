@@ -18,10 +18,14 @@
 #include <assert.h>
 #include <glob.h>
 #include <string>
+#include <unordered_map>
+
 
 using namespace std;
 
 #define ALPHABET_SIZE 256
+#define DEBUG(x) cout << #x << " = " << x << endl;
+
 
 string getFileContent(string &textFile);
 

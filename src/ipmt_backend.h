@@ -3,8 +3,6 @@
 
 #include "SuffixArray.cpp"
 
-#define DEBUG(x) cout << #x << " = " << x << endl;
-
 using namespace std;
 
 typedef pair<int,int> ii;
@@ -15,7 +13,7 @@ typedef vector<psi> v_psi;
 typedef vector<ii> vii;
 typedef unsigned long long ull;
 
-void index(string &txtfile);
-int search(string &idxfile, string &pat, bool silent);
+void index(string &txtfile, bool is77);
+int search(string &idxfile, string &pat, bool silent, bool is77);
 
 #endif

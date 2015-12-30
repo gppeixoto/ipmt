@@ -1,4 +1,3 @@
-#include "CompressionAlgorithm.cpp"
 #include "Util.h"
 #include <string>
 
@@ -17,12 +16,13 @@ struct LZTuple
 
     string toString(){
     	string ret = "";
-    	ret += to_string(pos) + " " + to_string(tam) + " " + to_string(c);
+    	ret += to_string(pos) + " " + to_string(tam) + " ";
+    	ret.push_back(c);
     	return ret;
     }
 };
 
-class LZ77 : CompressionAlgorithm{
+class LZ77{
 public:
 	string encode(string &str){
 		int window_size = 1024;
@@ -58,16 +58,19 @@ public:
 	}
 
 	string decode(string &str){
-
+		// DEBUG(str);
 		vector<LZTuple> vec = stringToTupleVec(str);
 		string ret = "";
 	    int pos;
 	    for(LZTuple tuple : vec){
 	        pos = ret.size() - tuple.pos - 1;
-	        ret.append(ret.substr(pos, tuple.tam));
+	        // DEBUG(pos);
+	        // DEBUG(tuple.tam);
+	        ret.append(ret.substr(pos < 0? 0 : pos, tuple.tam));
 	        if(tuple.c == '&')break;
 	        ret.append(1,tuple.c);
 	    }
+	    //DEBUG(ret);
 	    return ret;
 	}
 
@@ -75,7 +78,7 @@ private:
 	string tupleVecToString(vector<LZTuple> &vec){
 		ostringstream os;
 		for (auto &tuple : vec) {
-			os << tuple.toString() << endl;
+			os << tuple.toString() << " ";
 		}
 		return os.str();
 	}
@@ -90,11 +93,13 @@ private:
 	        pos = stoi(s);
 	        ss >> s;
 	        tam = stoi(s);
-	        ss >> s;
-	        c = s[0];
-	        if(c == '&'){
+	        ss >> c;
+	        if(c == '$'){
 	            c = '\n';
 	        }
+	        DEBUG(pos);
+	        DEBUG(tam);
+	        DEBUG(c);
 	        vec.push_back(LZTuple(pos,tam,c));
 	    }
 	    return vec;

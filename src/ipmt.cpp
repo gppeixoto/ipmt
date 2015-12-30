@@ -28,6 +28,7 @@ int main(int argc, char** argv){
     bool isIndex = false;
     bool hasPatternFile = false;
     bool isCount = false;
+    bool isLZ77 = false;
 
     string patternFile;
 
@@ -50,6 +51,7 @@ int main(int argc, char** argv){
           {"help",       no_argument,       0, 'h'},
           {"pattern",    required_argument, 0, 'p'},
           {"count",       no_argument,      0, 'c'},
+          {"lz77",       no_argument,       0, 'l'},
           {0, 0, 0, 0}
         };
         
@@ -66,7 +68,11 @@ int main(int argc, char** argv){
                 break;
             case 'c':
                 isCount = true;
-                options += 1;
+                options++;
+                break;
+            case 'l':
+                isLZ77 = true;
+                options++;
                 break;
             case 'h':
             case '?':
@@ -106,16 +112,16 @@ int main(int argc, char** argv){
 
     if(isIndex){
         for (string &file : textfiles){
-            index(file);
+            index(file, isLZ77);
         }
     }else{
         for (string &file : textfiles){
             for (string &pat : patterns) {
                 if(isCount){
-                    int num_occs = search(file, pat, true);
+                    int num_occs = search(file, pat, true, isLZ77);
                     cout << "Numero de ocorrencias de \"" << pat << "\" em " << file << ": " << num_occs << endl;
                 }else{
-                    search(file, pat, false);
+                    search(file, pat, false, isLZ77);
                 }
             }
         }
