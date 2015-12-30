@@ -1,5 +1,6 @@
 #include "CompressionAlgorithm.cpp"
 #include "Util.h"
+#include <string>
 
 using namespace std;
 
@@ -61,7 +62,7 @@ public:
 		vector<LZTuple> vec = stringToTupleVec(str);
 		string ret = "";
 	    int pos;
-	    for(auto tuple : vec){
+	    for(LZTuple tuple : vec){
 	        pos = ret.size() - tuple.pos - 1;
 	        ret.append(ret.substr(pos, tuple.tam));
 	        if(tuple.c == '&')break;
