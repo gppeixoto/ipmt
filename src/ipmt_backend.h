@@ -13,7 +13,7 @@ typedef vector<psi> v_psi;
 typedef vector<ii> vii;
 typedef unsigned long long ull;
 
-void index(string &txtfile, bool is77);
-int search(string &idxfile, string &pat, bool silent, bool is77);
+void index(string &txtfile);
+int search(string &idxfile, string &pat, bool silent);
 
 #endif
