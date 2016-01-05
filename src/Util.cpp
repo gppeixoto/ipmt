@@ -26,30 +26,3 @@ string basename(string filename)
     }
     return filename;
 }
-
-void vectorToString(vector<int> &v, string &ret){
-    ostringstream os;
-    
-    for (vector<int>::iterator it = v.begin() ; it != v.end(); ++it){
-        os << *it << ' ';
-    }
-    ret = os.str();
-}
-
-void vectorToString(int* arr, int len, string &ret){
-    ostringstream os;
-
-    for (int i = 0; i < len; ++i){
-        os << arr[i] << ' ';
-    }
-    ret = os.str();
-}
-
-void stringToVector(string &encoded, vector<int> &ret){
-    ret.clear();
-    int val;
-    stringstream ss(encoded);
-    while ( ss >> val ) {
-        ret.push_back(val);
-    }
-}

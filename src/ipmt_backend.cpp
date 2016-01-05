@@ -5,45 +5,34 @@
 
 SuffixArray load(string &idxfile) {
     LZW lzw = LZW();
-    ifstream infile(idxfile);
-    string input = "";
+    ifstream infile(idxfile, ios::binary);
     if (!infile.good()) {
         cout << "Arquivo de padrão << " << idxfile << " >> inválido" << endl;
         exit(1);
     }
-    string line, ret;
-    getline(infile, line);
-    ret = lzw.decode(line);
-    vector<int> arr;
-    stringToVector(ret, arr);
-    getline(infile, line);
-    string content;
-    content = lzw.decode(line);
-    SuffixArray sa = SuffixArray((int)arr.size());
-    for (int i = 0; i < (int) arr.size(); ++i){
-        sa.SA[i] = arr[i];
-    }
-    strncpy(sa.T, content.c_str(), content.size());
-    sa.n = content.size();
+    int sz;
+    infile >> sz;
+    SuffixArray sa = SuffixArray(sz);
+    infile.read((char*)sa.SA, sz * sizeof(int));
+    infile >> sz;
+    vector<BYTE> encodedText(sz);
+    infile.read((char*) &encodedText[0], sz);
+    string decoded = lzw.decode(encodedText);
+    strncpy(sa.T, decoded.c_str(), decoded.size());
+    sa.n = decoded.size();
     return sa;
 }
 
 void dump(SuffixArray &sa, string &fileContent, string &filename){
     LZW lzw = LZW();
     filename += ".idx";
-    ostringstream os;
-    string str, ret;
-    vectorToString(sa.SA, sa.n, str);
-    ret = lzw.encode(str);
-    os << ret;
-    os << '\n';
-    ret = lzw.encode(fileContent);
-    os << ret;
-    os << '\n';
-    ofstream ofs;
-    ofs.open(filename, ofstream::trunc);
-    ofs << os.str();
-    ofs.close();
+    ofstream outfile(filename, ios::out | ios::binary); 
+    outfile << sa.n;
+    outfile.write((char*)sa.SA, sa.n * sizeof(int));
+    vector<BYTE> encoded = lzw.encode(fileContent);
+    outfile << encoded.size();
+    outfile.write((char*)&encoded[0], encoded.size());
+    outfile.close();
 }
 
 void index(string &txtfile)

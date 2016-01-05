@@ -26,15 +26,12 @@ using namespace std;
 #define ALPHABET_SIZE 256
 #define DEBUG(x) cout << #x << " = " << x << endl;
 
+typedef unsigned char BYTE;
+
+
 
 string getFileContent(string &textFile);
 
 string basename(string filename);
-
-void vectorToString(vector<int> &v, string &ret);
-
-void vectorToString(int* arr, int len, string &ret);
-
-void stringToVector(string &encoded, vector<int> &ret);
 
 #endif
