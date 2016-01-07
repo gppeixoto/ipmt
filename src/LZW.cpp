@@ -4,10 +4,10 @@ using namespace std;
 
 class LZW {
 public:
-	vector<BYTE> encode(string &str){
+	vector<int> encode(string &str){
 		string ret;
-		vector<BYTE> encoded;
-	    unordered_map<string,BYTE> dictionary;
+		vector<int> encoded;
+	    unordered_map<string,int> dictionary;
 	    for (int i = 0; i < 256; i++){
 	        dictionary[string(1, i)] = i;
 	    }
@@ -37,15 +37,15 @@ public:
 	    return encoded;
 	}
 
-	string decode(vector<BYTE> &encoded){
+	string decode(vector<int> &encoded){
 		string ret;
 
-	    map<BYTE, string> dictionary;
+	    map<int, string> dictionary;
 	    for (int i = 0; i < ALPHABET_SIZE; i++){
 	        dictionary[i] = string(1, i);
 	    }
 
-	    BYTE prevcode, currcode;
+	    int prevcode, currcode;
 	    string entry;
 	    string aux;
 

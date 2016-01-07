@@ -26,9 +26,6 @@ using namespace std;
 #define ALPHABET_SIZE 256
 #define DEBUG(x) cout << #x << " = " << x << endl;
 
-typedef unsigned char BYTE;
-
-
 
 string getFileContent(string &textFile);
 

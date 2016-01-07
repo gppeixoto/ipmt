@@ -15,8 +15,8 @@ SuffixArray load(string &idxfile) {
     SuffixArray sa = SuffixArray(sz);
     infile.read((char*)sa.SA, sz * sizeof(int));
     infile >> sz;
-    vector<BYTE> encodedText(sz);
-    infile.read((char*) &encodedText[0], sz);
+    vector<int> encodedText(sz);
+    infile.read(reinterpret_cast<char*>(encodedText.data()), encodedText.size() * sizeof(int));
     string decoded = lzw.decode(encodedText);
     strncpy(sa.T, decoded.c_str(), decoded.size());
     sa.n = decoded.size();
@@ -29,9 +29,9 @@ void dump(SuffixArray &sa, string &fileContent, string &filename){
     ofstream outfile(filename, ios::out | ios::binary); 
     outfile << sa.n;
     outfile.write((char*)sa.SA, sa.n * sizeof(int));
-    vector<BYTE> encoded = lzw.encode(fileContent);
+    vector<int> encoded = lzw.encode(fileContent);
     outfile << encoded.size();
-    outfile.write((char*)&encoded[0], encoded.size());
+    outfile.write(reinterpret_cast<char*>(encoded.data()), encoded.size() * sizeof(int));
     outfile.close();
 }
 
